@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+backend/venv/
+.venv/
+
+# Build output
+.next/
+out/
+dist/
+build/
+__pycache__/
+*.py[cod]
+
+# Environment and secrets
+.env
+.env.*
+backend/.env
+backend/.env.*
+!.env.example
+!.env.local.example
+!backend/.env.example
+
+# Logs and local runtime files
+*.log
+dev.out.log
+dev.err.log
+backend/uvicorn.out.log
+backend/uvicorn.err.log
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Browser debug profiles
+.edge-debug-profile/
