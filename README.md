@@ -322,14 +322,31 @@ Common examples:
 - OpenAI `insufficient_quota`: API key/project has no usable API billing quota
 - Playwright `NotImplementedError` on Windows: fixed by sync Playwright worker-thread renderer
 
-## Current Next-Agent Priorities
+## Roadmap
 
 1. Improve AI normalization parsing so `OPENAI_NORMALIZATION_MODEL` responses are validated and merged cleanly.
 2. Improve generic color extraction for stores like ASOS.
 3. Extract size charts from modal/table screenshots and merge into `size_chart`.
 4. Add frontend upload UI for screenshot fallback when `missing_fields` includes `size_chart`.
-5. Add tests around product canonicalization, cache fallback, and extractor confidence scoring.
+5. Extend tests to product canonicalization, cache fallback, and extractor confidence scoring (fit engine, URL guard and request validation are covered).
 6. Consider DB migration columns for `model_info`, `extraction_confidence`, `missing_fields`, and `sources` instead of storing them in `products.raw_data`.
+
+## Security Notes
+
+- The service-role key is backend-only. The browser only ever receives the Supabase URL, the anon key and the API base URL (`NEXT_PUBLIC_*`), so row-level security on the Supabase tables is what protects user data.
+- Product URLs are user input that the server fetches. `backend/services/url_safety.py` rejects non-HTTP schemes, embedded credentials and hosts that are or resolve to private, loopback or link-local addresses (SSRF). It does not prevent DNS rebinding, so restrict egress at the network level in any real deployment.
+- Anonymous session tokens are compared in constant time.
+- `.env`, `.env.local` and `backend/.env` are git-ignored; only the `*.example` templates are committed.
+
+## Tests
+
+The backend tests need only `pydantic` and `pytest`; they make no network calls and no paid API calls.
+
+```bash
+cd backend
+pip install pydantic pytest
+python -m pytest -q
+```
 
 ## Verification Commands
 
