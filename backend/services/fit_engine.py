@@ -40,7 +40,6 @@ Ease zones per measurement type:
 
 from models.schemas import BodyMeasurements, FitResult, FitWarning
 
-
 # ── Ease classification ───────────────────────────────────────────────────────
 
 FIT_ZONE_ORDER = ["tight", "slim", "regular", "relaxed", "oversized"]
@@ -138,9 +137,13 @@ def calculate_fit(
             zone = _classify_ease(chart_field.lower(), ease)
             score = FIT_ZONE_SCORE.get(zone, 0.5)
 
-            # Boost score if zone matches preference
+            # The preferred zone scores highest; when the user asked for something
+            # other than "regular", a regular fit is a close second rather than a tie
+            # breaker that always wins (previously slim/relaxed could never be chosen).
             if zone == preference_target:
-                score = min(score + 0.1, 1.0)
+                score = 1.0
+            elif zone == "regular" and preference_target != "regular":
+                score = 0.9
             # Penalise tight (never preferred)
             if zone == "tight":
                 size_warnings.append(FitWarning(
