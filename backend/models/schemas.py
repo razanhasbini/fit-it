@@ -6,6 +6,8 @@ from pydantic import BaseModel, Field, field_validator
 from typing import Optional
 from uuid import UUID
 
+from services.url_safety import ensure_public_http_url
+
 
 # ── Products ──────────────────────────────────────────────────────────────────
 
@@ -45,10 +47,8 @@ class ProductExtractRequest(BaseModel):
 
     @field_validator("url")
     @classmethod
-    def must_be_http(cls, v: str) -> str:
-        if not v.startswith(("http://", "https://")):
-            raise ValueError("URL must start with http:// or https://")
-        return v
+    def must_be_public_http(cls, v: str) -> str:
+        return ensure_public_http_url(v)
 
 
 # ── Body / Measurements ───────────────────────────────────────────────────────
@@ -98,10 +98,8 @@ class StartSessionRequest(BaseModel):
 
     @field_validator("product_url")
     @classmethod
-    def product_url_must_be_http(cls, v: str) -> str:
-        if not v.startswith(("http://", "https://")):
-            raise ValueError("Product URL must start with http:// or https://")
-        return v
+    def product_url_must_be_public_http(cls, v: str) -> str:
+        return ensure_public_http_url(v)
 
 
 class ProductScreenshotExtractRequest(BaseModel):

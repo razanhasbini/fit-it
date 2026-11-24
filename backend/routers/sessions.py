@@ -10,6 +10,8 @@ Flow:
   3. PATCH /api/sessions/{id}   → update selected size/color
 """
 
+import hmac
+
 from fastapi import APIRouter, Header, HTTPException, BackgroundTasks
 from typing import Optional
 from uuid import uuid4
@@ -51,7 +53,7 @@ def _verify_session_owner(row: dict, user_id: Optional[str], session_token: Opti
 
     if not session_token:
         raise HTTPException(status_code=401, detail="Session token required")
-    if row.get("session_token") != session_token:
+    if not hmac.compare_digest(str(row.get("session_token") or ""), session_token):
         raise HTTPException(status_code=403, detail="Invalid session token")
 
 
