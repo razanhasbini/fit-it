@@ -11,12 +11,12 @@ build/
 __pycache__/
 *.py[cod]
 
-# Environment files
-# The user explicitly requested committing env files to the private repo.
+# Environment files: real values stay local, only templates are committed
+.env
+.env.*
+backend/.env
 !.env.example
-!.env.local
 !.env.local.example
-!backend/.env
 !backend/.env.example
 
 # Logs and local runtime files
